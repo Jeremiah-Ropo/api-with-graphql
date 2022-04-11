@@ -9,8 +9,8 @@ db.once('open', () => {
 });
 
 
-require('./Comment');
-require('./Post');
-require('./User');
+require('../models/Comment');
+require('../models/Post');
+require('../models/User');
 
 module.exports = db;
