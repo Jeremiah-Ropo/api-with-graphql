@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
+const dotenv = require('dotenv').config()
 
-mongoose.connect(process.env.MONGO_URI, {useNewUrlParser:true, useUnifiedTopology:true})
+url = process.env.MONGO_URI
+mongoose.connect(url, {useNewUrlParser:true, useUnifiedTopology:true})
 
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error'));
@@ -9,8 +11,6 @@ db.once('open', () => {
 });
 
 
-require('../models/Comment');
-require('../models/Post');
-require('../models/User');
-
-module.exports = db;
+require('./Comment');
+require('./Post');
+require('./User');

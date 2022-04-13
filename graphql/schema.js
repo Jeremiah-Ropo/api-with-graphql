@@ -5,10 +5,10 @@
 const { GraphQLSchema, GraphQLObjectType } = require('graphql');
 
 // Import queries
-const { } = require('./queries')
+const { users } = require('./queries')
 
 //Import mutations
-const { } = require('./mutations')
+const { register } = require('./mutations')
 
 // Define QueryType (A query type is a graphql object type. Every queryType takes a
 //        name first, description and fields)
@@ -16,7 +16,7 @@ const QueryType = new GraphQLObjectType({
     name: 'QueryType',
     description: 'Queries',
     fields: {
-
+        users
     }
 })
 
@@ -25,7 +25,7 @@ const mutationType = new GraphQLObjectType({
     name: 'mutationType',
     description: 'Mutations',
     fields: {
-        
+        register
     }
 })
 
