@@ -13,7 +13,6 @@ const port = process.env.PORT || 3200
 
 //JWT 
 const {authenticate} = require('./middlewares/auth')
-
 app.use(authenticate);
 
 
@@ -22,10 +21,6 @@ app.get('/', (req,res) => {
     // console.log(req.verifiedUser)
     return res.json({msg: 'Welcome go to /graphql'})
 })
-
-
-
-
 
 
 
