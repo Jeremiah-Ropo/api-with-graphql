@@ -2,7 +2,7 @@ require('../models/database')
 
 const User  = require('../models/User')
 const Post = require('../models/Post')
-const { GraphQLList, GraphQLString, GraphQLID } = require('graphql')
+const { GraphQLList, GraphQLString, GraphQLID, GraphQLObjectType } = require('graphql')
 const { } = require('../utils/auth')
 const { UserType, PostType } = require('./types')
 const req = require('express/lib/request')
@@ -32,19 +32,28 @@ const user = {
     }
 }
 
+const posts = {
+    type: new GraphQLList(PostType),
+    description: 'Retrieve all posts',
+    resolve(parent, args){
+        return Post.find()
+    }
+}
+
+
 const userPost = {
     type: PostType,
     description: 'Retrieve user post by id and email',
-    args: {authorId : { type: GraphQLID}, title: {type:GraphQLString}},
+    args: {id : { type: GraphQLID}, title: {type:GraphQLString}},
     async resolve(parent, args){
-        const { userId, title } = args;
+        const {id, title } = args;
 
-        if (args.userId){
-            return Post.findById({authorId:userId})
+        if (args.id){
+            return Post.findById({_id:id})
         } else if(args.title){
             return Post.find({title:title})
         }
     }
 }
 
-module.exports = {users, user, userPost}
+module.exports = {users, user, userPost, posts}
