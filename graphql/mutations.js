@@ -149,7 +149,57 @@ const deletePost = {
     
 }
 
+const updateComment = {
+    type: CommentType,
+    description: "Update blog Comment",
+    args : {
+        id: { type: GraphQLString},
+        comment: { type: GraphQLString},
+       
+    },
+    async resolve(parent, args, {verifiedUser}){
+        if(!verifiedUser){
+            throw new Error('Login to update!')
+        };
+
+        const {id, comment} = args;
+        const CommentUpdate = await Comment.findOneAndUpdate(
+            {postId: id, userId:verifiedUser._id},
+            {userId:verifiedUser._id, comment: comment},
+            {new:true, runValidators:true}
+            )
+            return CommentUpdate
+        }
+        
+}
+
+const deleteComment = {
+    type: CommentType,
+    description : "Delete a Comment",
+    args : {
+        id: {type: GraphQLID},
+        comment:{ type: GraphQLString}
+    },
+
+    async resolve(parent, args, {verifiedUser}){
+        if(!verifiedUser){
+            throw new Error("Can't delete this Comment")
+        }
+        try{
+            const deleteComment = await Comment.findOneAndDelete(
+                {postId: args.id, comment: args.comment}
+            )
+            if(!deleteComment){
+                throw new Error("No Comment id")
+            }
+            return "Comment Deleted"
+        }catch(err){
+            throw err.message
+        }
+    }   
+    
+}
 
 
 
-module.exports = { register, login, makePost, makeComment, updatePost, deletePost}
+module.exports = { register, login, makePost, makeComment, updatePost, deletePost,updateComment, deleteComment}

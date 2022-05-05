@@ -36,6 +36,8 @@ const mutationType = new GraphQLObjectType({
         makeComment,
         updatePost,
         deletePost,
+        updateComment,
+        deleteComment
     }
 })
 
