@@ -6,6 +6,7 @@ const User = require('../models/User');
 const Post = require('../models/Post');
 const Comment = require('../models/Comment');
 
+//Schema is the way you want to retrive or fill data from or into your database...
 
 const UserType = new GraphQLObjectType({
     name: 'User',
@@ -47,10 +48,9 @@ const PostType = new GraphQLObjectType({
       id: { type: GraphQLID },
       comment: { type: GraphQLString },
       user: {
-        type: new GraphQLList(UserType),
-        async resolve(parent, args) {
-            userid = parent.userId
-          return User.findById(userid)
+        type: UserType,
+        async resolve(parent, args) {  
+          return User.findById(parent.userId)
         },
       },
       post: {

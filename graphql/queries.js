@@ -2,6 +2,7 @@ require('../models/database')
 
 const User  = require('../models/User')
 const Post = require('../models/Post')
+const Comment = require('../models/Comment')
 const { GraphQLList, GraphQLString, GraphQLID, GraphQLObjectType } = require('graphql')
 const { } = require('../utils/auth')
 const { UserType, PostType, CommentType } = require('./types')
@@ -15,7 +16,8 @@ const users = {
         return User.find()
     }
 }
-//Queries is more like a search for....
+//Queries is more like a search for or retrieving sth from the database....
+//While working with Queries on the browser, you focus your mind on the way you structure your types.
 const user = {
     type: UserType,
     description: "Retrieve one user by email and id",
@@ -59,7 +61,7 @@ const userPost = {
 const comments = {
     type: new GraphQLList(CommentType),
     description: "Retrieves list of comments",
-    resolve() {
+    resolve(parent, args) {
       return Comment.find()
     },
   }
