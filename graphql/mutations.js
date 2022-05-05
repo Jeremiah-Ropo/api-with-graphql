@@ -4,7 +4,8 @@ const { GraphQLString, GraphQLID } = require('graphql')
 const { createJwtToken } = require('../utils/auth');
 const User = require('../models/User');
 const Post = require('../models/Post');
-const {PostType} = require("./types")
+const Comment = require('../models/Comment');
+const {PostType, CommentType} = require("./types")
 
 
 const register = {
@@ -49,7 +50,7 @@ const login = {
 }
 
 
-const post = {
+const makePost = {
     type: PostType,
     description: "Create a post",
     args: {
@@ -64,7 +65,7 @@ const post = {
         const {title, body } = args;
 
         const post = new Post(
-            {authorId: verifiedUser.user._id,
+            {authorId: verifiedUser._id,
             title:title,
             body: body
         })
@@ -72,5 +73,34 @@ const post = {
         return post
     }
 }
+//To write a mutation you look at how you can fill the database/models
 
-module.exports = { register, login, post}
+
+const makeComment = {
+    type: CommentType,
+    description: "Create a comment on the post",
+    args: {
+        comment : { type: GraphQLString},
+        postId: { type: GraphQLString},
+    },
+    async resolve(parent, args, {verifiedUser}){
+
+        if(!verifiedUser) {
+            throw new Error('Login to comment')
+        };
+
+        const comment = new Comment({
+            comment:args.comment,
+            userId: verifiedUser._id,
+            postId:args.postId
+        })
+        return comment.save()
+    }
+}
+
+
+
+
+
+
+module.exports = { register, login, makePost, makeComment}

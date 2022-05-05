@@ -4,7 +4,7 @@ const User  = require('../models/User')
 const Post = require('../models/Post')
 const { GraphQLList, GraphQLString, GraphQLID, GraphQLObjectType } = require('graphql')
 const { } = require('../utils/auth')
-const { UserType, PostType } = require('./types')
+const { UserType, PostType, CommentType } = require('./types')
 const req = require('express/lib/request')
 
 
@@ -56,4 +56,21 @@ const userPost = {
     }
 }
 
-module.exports = {users, user, userPost, posts}
+const comments = {
+    type: new GraphQLList(CommentType),
+    description: "Retrieves list of comments",
+    resolve() {
+      return Comment.find()
+    },
+  }
+  
+  const comment = {
+    type: CommentType,
+    description: "Retrieves one comment",
+    args: { id: { type: GraphQLID } },
+    resolve(_, args) {
+      return Comment.findById(args.id)
+    },
+  }
+
+module.exports = {users, user, userPost, posts, comment, comments}

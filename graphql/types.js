@@ -1,6 +1,10 @@
+require('../models/database')
+
 const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLList } = require('graphql');
 
-const { User, Post, Comment } = require('../models/database');
+const User = require('../models/User');
+const Post = require('../models/Post');
+const Comment = require('../models/Comment');
 
 
 const UserType = new GraphQLObjectType({
@@ -15,47 +19,48 @@ const UserType = new GraphQLObjectType({
 });
 
 const PostType = new GraphQLObjectType({
-    name: 'Post',
-    description: 'Post type',
+    name: "Post",
+    description: "Post type",
     fields: () => ({
-        id: {type:GraphQLID},
-        title: {type:GraphQLString},
-        body: { type: GraphQLString},
-        author: {
-            type: UserType,
-            resolve(parent, args){
-                return User.findById(parent.authorId)
-            },
+      id: { type: GraphQLID },
+      title: { type: GraphQLString },
+      body: { type: GraphQLString },
+      author: {
+        type: UserType,
+        async resolve(parent, args) {
+          return User.findById(parent.authorId)
         },
-        comments: {
-            type:new GraphQLList(CommentType),
-            resolve(parent, args){
-                return Comment.findById(parent.authorId)
-            },
+      },
+      comments: {
+        type: new GraphQLList(CommentType),
+        async resolve(parent, args) {
+          return Comment.find({ postId: parent.id })
         },
-    })
-});
+      },
+    }),
+  })
 
-const CommentType = new GraphQLObjectType({
-    name: 'Comment',
-    description: ' Comment type',
+  const CommentType = new GraphQLObjectType({
+    name: "Comment",
+    description: "Comment type",
     fields: () => ({
-        comment: {type:GraphQLString},
-        user: {
-            type: UserType,
-            resolve(parent, args){
-                return User.findById(parent.userId)
-            },
+      id: { type: GraphQLID },
+      comment: { type: GraphQLString },
+      user: {
+        type: new GraphQLList(UserType),
+        async resolve(parent, args) {
+            userid = parent.userId
+          return User.findById(userid)
         },
-        posts:{
-            type: PostType,
-            resolve(parent, args){
-                return Post.findById(parent.postId)
-            }
-        }
-    })
-})
-
-
+      },
+      post: {
+        type: PostType,
+        async resolve(parent, args) {
+            // postid = parent.postId
+          return Post.findById(parent.postId)
+        },
+      },
+    }),
+  })
 
 module.exports = {UserType, CommentType, PostType}

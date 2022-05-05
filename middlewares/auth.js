@@ -5,7 +5,7 @@ const authenticate = async (req,res,next) => {
 
     try {
         const verified = jwt.verify(token, key)
-        req.verifiedUser = verified
+        req.verifiedUser = verified.user
         console.log("Verification successful", verified)
         next()
     } catch (error) {
